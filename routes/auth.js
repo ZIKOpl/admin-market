@@ -6,7 +6,7 @@ router.get("/discord", passport.authenticate("discord"));
 
 router.get(
   "/discord/callback",
-  passport.authenticate("discord", { failureRedirect: "/auth/failed" }),
+  passport.authenticate("discord", { failureRedirect: "/" }),
   async (req, res) => {
     try {
       await Log.create({
@@ -18,9 +18,10 @@ router.get(
       console.error("❌ Erreur log login:", err.message);
     }
 
+    // ✅ REDIRECTION FINALE
     res.redirect("/vouches.html");
   }
-)
+);
 
 router.get("/failed", async (req, res) => {
   try {
