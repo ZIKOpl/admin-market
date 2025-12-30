@@ -36,7 +36,7 @@ passport.use(new DiscordStrategy({
   clientID: process.env.DISCORD_CLIENT_ID,
   clientSecret: process.env.DISCORD_CLIENT_SECRET,
   callbackURL: process.env.DISCORD_CALLBACK,
-  scope: ["identify"]
+  scope: ["identify", "guilds", "guilds.members.read"]
 }, (accessToken, refreshToken, profile, done) => {
   return done(null, profile);
 }));
