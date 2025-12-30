@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Logs • HomeMarket</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+  <div class="logo"><span>Home</span><span>Market</span></div>
+
+  <div class="nav-links">
+    <a href="/vouches.html">Vouches</a>
+    <a href="/items.html">Items</a>
+    <a href="/vendeurs.html">Vendeurs</a>
+    <a href="/paiements.html">Paiements</a>
+    <a href="/logs.html" class="active">Logs</a>
+    <a href="/config.html">Autre</a>
+  </div>
+
+  <div id="user"></div>
+</div>
+
+<!-- CONTENT -->
+<div class="container">
+
+  <h1>Logs</h1>
+
+  <!-- FILTRES -->
+  <div class="card" style="display:flex; gap:15px; align-items:center;">
+    <label for="filter"><b>Filtrer :</b></label>
+
+    <select id="filter">
+      <option value="">Tous les logs</option>
+      <option value="vendeur:add">Ajout vendeur</option>
+      <option value="vendeur:edit">Modification vendeur</option>
+      <option value="vendeur:delete">Suppression vendeur</option>
+      <option value="vendeur:clear">Clear vouches vendeur</option>
+
+      <option value="item:add">Ajout item</option>
+      <option value="item:edit">Modification item</option>
+      <option value="item:delete">Suppression item</option>
+
+      <option value="paiement:add">Ajout paiement</option>
+      <option value="paiement:edit">Modification paiement</option>
+      <option value="paiement:delete">Suppression paiement</option>
+
+      <option value="vouch:add">Ajout vouch</option>
+      <option value="vouch:delete">Suppression vouch</option>
+
+      <option value="config:update">Configuration modifiée</option>
+    </select>
+  </div>
+  
+<div class="card" style="display:flex; justify-content:space-between; align-items:center;">
+  <h2>Logs</h2>
+  <button class="btn delete" onclick="confirmClearLogs()">
+    Clear logs
+  </button>
+</div>
+
+  <!-- LISTE DES LOGS -->
+  <div id="logs" style="margin-top:20px; display:flex; flex-direction:column; gap:12px;">
+    <!-- logs injectés en JS -->
+  </div>
+
+</div>
+
+<!-- TOASTS -->
+<div id="toast-container"></div>
+
+<!-- SCRIPTS -->
+<script src="/js/auth.js"></script>
+<script src="/js/ui.js"></script>
+<script src="/js/logs.js"></script>
+
+</body>
+</html>

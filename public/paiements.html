@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Paiements • HomeMarket</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<div class="navbar">
+  <div class="logo"><span>Home</span><span>Market</span></div>
+  <div class="nav-links">
+    <a href="/vouches.html">Vouches</a>
+    <a href="/items.html">Items</a>
+    <a href="/vendeurs.html">Vendeurs</a>
+    <a href="/paiements.html">Paiements</a>
+    <a href="/logs.html" class="active">Logs</a>
+    <a href="/config.html">Autre</a>
+  </div>
+  <div id="user"></div>
+</div>
+
+<div class="container">
+  <h1>Paiements</h1>
+
+  <div class="card">
+    <input id="payName" placeholder="Nom du moyen de paiement">
+    <button class="btn add" onclick="addPaiement()">Ajouter</button>
+  </div>
+
+  <div id="paiements"></div>
+</div>
+
+<div id="toast-container"></div>
+
+<script src="/js/auth.js"></script>
+<script src="/js/ui.js"></script>
+<script src="/js/paiements.js"></script>
+</body>
+</html>

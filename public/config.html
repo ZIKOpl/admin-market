@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Configuration</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="navbar">
+  <div class="logo"><span>Home</span> Market</div>
+  <div class="nav-links">
+    <a href="vouches.html">Vouches</a>
+    <a href="items.html">Items</a>
+    <a href="vendeurs.html">Vendeurs</a>
+    <a href="paiements.html">Paiements</a>
+    <a href="logs.html" class="active">Logs</a>
+    <a href="config.html">Autre</a>
+  </div>
+  <div id="user"></div>
+</div>
+
+<div class="container">
+  <h1>Configuration</h1>
+
+  <div class="card">
+    <h3>Salon logs</h3>
+    <input id="logChannel" placeholder="ID du salon">
+    <button class="btn edit" onclick="save()">Sauvegarder</button>
+    <p id="logResult"></p>
+  </div>
+
+  <div class="card">
+    <h3>Salon leaderboard</h3>
+    <input id="leaderboardChannel" placeholder="ID du salon">
+    <button class="btn edit" onclick="save()">Sauvegarder</button>
+    <p id="leaderboardResult"></p>
+  </div>
+
+  <div class="card">
+    <h3>Couleur embed</h3>
+    <input id="color" placeholder="#8b5cf6">
+    <button class="btn edit" onclick="save()">Sauvegarder</button>
+    <div id="colorPreview" style="width:50px;height:50px;border-radius:8px;"></div>
+  </div>
+</div>
+<div id="toast-container"></div>
+
+<script src="js/auth.js"></script>
+<script src="js/config.js"></script>
+<script src="js/ui.js"></script>
+</body>
+</html>
