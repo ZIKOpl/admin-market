@@ -505,44 +505,6 @@ input:focus {
   justify-content: flex-end;
   gap: 10px;
 }
-.log-card {
-  background: #161616;
-  border-radius: 12px;
-  padding: 14px;
-  margin-bottom: 12px;
-}
 
-.log-type {
-  font-size: 12px;
-  font-weight: bold;
-  opacity: .8;
-}
-
-.log-msg {
-  margin: 6px 0;
-}
-
-.log-meta {
-  font-size: 12px;
-  opacity: .6;
-}
-.logs-filters {
-  display: flex;
-  gap: 15px;
-  align-items: center;
-}
-
-.logs-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.logs-list {
-  margin-top: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
 
 
