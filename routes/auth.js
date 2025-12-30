@@ -7,24 +7,23 @@ const Log = require("../models/Log");
  */
 router.get("/discord", passport.authenticate("discord"));
 
-/**
- * ✅ Callback Discord (connexion réussie)
- */
 router.get(
   "/discord/callback",
   passport.authenticate("discord", { failureRedirect: "/auth/failed" }),
   async (req, res) => {
-
-    // 🧾 LOG : connexion réussie
-    await Log.create({
-      type: "auth:login",
-      message: "Connexion réussie",
-      userId: req.user.id
-    });
+    try {
+      await Log.create({
+        type: "auth:login",
+        message: "Connexion réussie",
+        userId: req.user?.id || null
+      });
+    } catch (err) {
+      console.error("❌ Erreur log login:", err.message);
+    }
 
     res.redirect("/vouches.html");
   }
-);
+)
 
 /**
  * ❌ Connexion échouée
