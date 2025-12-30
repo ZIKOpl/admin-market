@@ -2,9 +2,6 @@ const router = require("express").Router();
 const passport = require("passport");
 const Log = require("../models/Log");
 
-/**
- * 🔐 Redirection Discord
- */
 router.get("/discord", passport.authenticate("discord"));
 
 router.get(
@@ -25,49 +22,38 @@ router.get(
   }
 )
 
-/**
- * ❌ Connexion échouée
- */
 router.get("/failed", async (req, res) => {
-  await Log.create({
-    type: "auth:failed",
-    message: "Échec de connexion Discord",
-    userId: null
-  });
+  try {
+    await Log.create({
+      type: "auth:failed",
+      message: "Échec de connexion Discord",
+      userId: null
+    });
+  } catch (err) {
+    console.error("❌ Erreur log failed:", err.message);
+  }
 
   res.redirect("/");
 });
 
-/**
- * 🚪 Déconnexion
- */
 router.get("/logout", async (req, res) => {
-  if (req.user) {
-    await Log.create({
-      type: "auth:logout",
-      message: "Déconnexion",
-      userId: req.user.id
-    });
+  try {
+    if (req.user) {
+      await Log.create({
+        type: "auth:logout",
+        message: "Déconnexion",
+        userId: req.user.id
+      });
+    }
+  } catch (err) {
+    console.error("❌ Erreur log logout:", err.message);
   }
 
-  req.logout(() => {
-    res.redirect("/");
-  });
+  req.logout(() => res.redirect("/"));
 });
 
-/**
- * 👀 Infos utilisateur
- */
 router.get("/me", async (req, res) => {
   if (!req.user) return res.json(null);
-
-  // 🧾 LOG (optionnel)
-  await Log.create({
-    type: "auth:me",
-    message: "Consultation profil utilisateur",
-    userId: req.user.id
-  });
-
   res.json(req.user);
 });
 
