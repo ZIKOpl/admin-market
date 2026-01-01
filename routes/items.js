@@ -9,8 +9,16 @@ const isAdmin = require("../middlewares/isAdmin");
 |--------------------------------------------------------------------------
 */
 router.get("/", isAdmin, async (req, res) => {
-  const items = await Item.find().sort({ createdAt: -1 });
-  res.json(items);
+  try {
+    const items = await Item.find({
+      guildId: process.env.GUILD_ID
+    }).sort({ createdAt: -1 });
+
+    res.json(items);
+  } catch (err) {
+    console.error("❌ GET ITEMS:", err);
+    res.status(500).json([]);
+  }
 });
 
 /*
@@ -19,25 +27,38 @@ router.get("/", isAdmin, async (req, res) => {
 |--------------------------------------------------------------------------
 */
 router.post("/", isAdmin, async (req, res) => {
-  const { name } = req.body;
-  if (!name) return res.status(400).json({ error: "Nom requis" });
+  try {
+    const { name } = req.body;
+    if (!name) {
+      return res.status(400).json({ error: "Nom requis" });
+    }
 
-  // ❌ Doublon
-  const exists = await Item.findOne({ name });
-  if (exists) {
-    return res.status(409).json({ error: "Item déjà existant" });
+    const exists = await Item.findOne({
+      guildId: process.env.GUILD_ID,
+      name
+    });
+
+    if (exists) {
+      return res.status(409).json({ error: "Item déjà existant" });
+    }
+
+    const item = await Item.create({
+      guildId: process.env.GUILD_ID,
+      name
+    });
+
+    await Log.create({
+      guildId: process.env.GUILD_ID,
+      type: "item:add",
+      message: `Item ajouté : ${name}`,
+      userId: req.user.id
+    });
+
+    res.json(item);
+  } catch (err) {
+    console.error("❌ ADD ITEM:", err);
+    res.status(500).json({ error: "Erreur création item" });
   }
-
-  const item = await Item.create({ name });
-
-  // 🧾 LOG
-  await Log.create({
-    type: "item:add",
-    message: `Item ajouté : ${name}`,
-    userId: req.user.id
-  });
-
-  res.json(item);
 });
 
 /*
@@ -46,30 +67,47 @@ router.post("/", isAdmin, async (req, res) => {
 |--------------------------------------------------------------------------
 */
 router.put("/:id", isAdmin, async (req, res) => {
-  const { name } = req.body;
-  if (!name) return res.status(400).json({ error: "Nom requis" });
+  try {
+    const { name } = req.body;
+    if (!name) {
+      return res.status(400).json({ error: "Nom requis" });
+    }
 
-  const item = await Item.findById(req.params.id);
-  if (!item) return res.status(404).json({ error: "Item introuvable" });
+    const item = await Item.findOne({
+      _id: req.params.id,
+      guildId: process.env.GUILD_ID
+    });
 
-  // ❌ Doublon
-  const exists = await Item.findOne({ name });
-  if (exists && exists._id.toString() !== item._id.toString()) {
-    return res.status(409).json({ error: "Nom déjà utilisé" });
+    if (!item) {
+      return res.status(404).json({ error: "Item introuvable" });
+    }
+
+    const exists = await Item.findOne({
+      guildId: process.env.GUILD_ID,
+      name,
+      _id: { $ne: item._id }
+    });
+
+    if (exists) {
+      return res.status(409).json({ error: "Nom déjà utilisé" });
+    }
+
+    const oldName = item.name;
+    item.name = name;
+    await item.save();
+
+    await Log.create({
+      guildId: process.env.GUILD_ID,
+      type: "item:edit",
+      message: `Item modifié : ${oldName} → ${name}`,
+      userId: req.user.id
+    });
+
+    res.json(item);
+  } catch (err) {
+    console.error("❌ EDIT ITEM:", err);
+    res.status(500).json({ error: "Erreur modification item" });
   }
-
-  const oldName = item.name;
-  item.name = name;
-  await item.save();
-
-  // 🧾 LOG
-  await Log.create({
-    type: "item:edit",
-    message: `Item modifié : ${oldName} → ${name}`,
-    userId: req.user.id
-  });
-
-  res.json(item);
 });
 
 /*
@@ -78,19 +116,30 @@ router.put("/:id", isAdmin, async (req, res) => {
 |--------------------------------------------------------------------------
 */
 router.delete("/:id", isAdmin, async (req, res) => {
-  const item = await Item.findById(req.params.id);
-  if (!item) return res.status(404).json({ error: "Item introuvable" });
+  try {
+    const item = await Item.findOne({
+      _id: req.params.id,
+      guildId: process.env.GUILD_ID
+    });
 
-  await item.deleteOne();
+    if (!item) {
+      return res.status(404).json({ error: "Item introuvable" });
+    }
 
-  // 🧾 LOG
-  await Log.create({
-    type: "item:delete",
-    message: `Item supprimé : ${item.name}`,
-    userId: req.user.id
-  });
+    await item.deleteOne();
 
-  res.json({ success: true });
+    await Log.create({
+      guildId: process.env.GUILD_ID,
+      type: "item:delete",
+      message: `Item supprimé : ${item.name}`,
+      userId: req.user.id
+    });
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error("❌ DELETE ITEM:", err);
+    res.status(500).json({ error: "Erreur suppression item" });
+  }
 });
 
 module.exports = router;
