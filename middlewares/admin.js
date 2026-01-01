@@ -1,37 +1,29 @@
-module.exports = async (req, res, next) => {
+module.exports = (req, res, next) => {
+  // ❌ Pas connecté
   if (!req.user) {
-    console.log("❌ Pas connecté");
-    return res.sendStatus(401);
+    return res.status(401).json({ error: "Non connecté" });
   }
 
-  const userId = req.user.id;
-  const guildId = process.env.GUILD_ID;
-
-  console.log("🔍 Vérif admin pour", userId);
-
-  const response = await fetch(
-    `https://discord.com/api/guilds/${guildId}/members/${userId}`,
-    {
-      headers: {
-        Authorization: `Bot ${process.env.BOT_TOKEN}`
-      }
-    }
-  );
-
-  if (!response.ok) {
-    console.log("❌ Discord API ERROR:", response.status);
-    return res.sendStatus(403);
+  // ✅ Admin déjà validé en session
+  if (req.session.isAdmin === true) {
+    return next();
   }
 
-  const member = await response.json();
-
-  console.log("🎭 Rôles utilisateur :", member.roles);
-
-  if (!member.roles.includes(process.env.ADMIN_ROLE_ID)) {
-    console.log("❌ Rôle admin manquant");
-    return res.sendStatus(403);
+  // ❌ Déjà refusé auparavant
+  if (req.session.isAdmin === false) {
+    return res.status(403).json({ error: "Accès refusé" });
   }
 
-  console.log("✅ Admin OK");
-  next();
+  /**
+   * ⚠️ SÉCURITÉ :
+   * À CE STADE, on NE DOIT PLUS appeler Discord
+   * Les rôles doivent être définis AU LOGIN
+   */
+
+  console.warn("⚠️ Admin non initialisé en session");
+
+  req.session.isAdmin = false;
+  return res.status(403).json({
+    error: "Accès refusé (admin non initialisé)"
+  });
 };
