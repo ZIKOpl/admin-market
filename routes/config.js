@@ -1,12 +1,12 @@
 const router = require("express").Router();
 const Config = require("../models/Config");
 const Log = require("../models/Log");
-const admin = require("../middlewares/admin");
+const isAdmin = require("../middlewares/isAdmin");
 
 /**
  * 📥 GET CONFIG
  */
-router.get("/", admin, async (req, res) => {
+router.get("/", isAdmin, async (req, res) => {
   let config = await Config.findOne({ guildId: process.env.GUILD_ID });
 
   if (!config) {
@@ -26,7 +26,7 @@ router.get("/", admin, async (req, res) => {
 /**
  * ✏️ UPDATE CONFIG
  */
-router.put("/", admin, async (req, res) => {
+router.put("/", isAdmin, async (req, res) => {
   const { embedColor, logChannelId, leaderboardChannelId } = req.body;
 
   const config = await Config.findOneAndUpdate(

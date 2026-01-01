@@ -1,12 +1,12 @@
 const router = require("express").Router();
 const Paiement = require("../models/Paiement");
 const Log = require("../models/Log");
-const admin = require("../middlewares/admin");
+const isAdmin = require("../middlewares/isAdmin");
 
 /*
   GET → liste moyens de paiement
 */
-router.get("/", admin, async (req, res) => {
+router.get("/", isAdmin, async (req, res) => {
   const paiements = await Paiement.find({
     guildId: process.env.GUILD_ID
   }).sort({ name: 1 });
@@ -24,7 +24,7 @@ router.get("/", admin, async (req, res) => {
 /*
   POST → ajout paiement
 */
-router.post("/", admin, async (req, res) => {
+router.post("/", isAdmin, async (req, res) => {
   const { name, force } = req.body;
 
   if (!name) {
@@ -69,7 +69,7 @@ router.post("/", admin, async (req, res) => {
 /*
   PUT → modifier paiement
 */
-router.put("/:id", admin, async (req, res) => {
+router.put("/:id", isAdmin, async (req, res) => {
   const { name } = req.body;
 
   const conflict = await Paiement.findOne({
@@ -109,7 +109,7 @@ router.put("/:id", admin, async (req, res) => {
 /*
   DELETE → supprimer paiement
 */
-router.delete("/:id", admin, async (req, res) => {
+router.delete("/:id", isAdmin, async (req, res) => {
   const paiement = await Paiement.findById(req.params.id);
 
   await Paiement.findByIdAndDelete(req.params.id);

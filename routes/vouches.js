@@ -1,12 +1,12 @@
 const router = require("express").Router();
 const Vouch = require("../models/Vouch");
 const Log = require("../models/Log");
-const admin = require("../middlewares/admin");
+const isAdmin = require("../middlewares/isAdmin");
 
 /* ===========================
    GET → liste des vouches
 =========================== */
-router.get("/", admin, async (req, res) => {
+router.get("/", isAdmin, async (req, res) => {
   try {
     const vouches = await Vouch.find({
       guildId: process.env.GUILD_ID
@@ -28,7 +28,7 @@ router.get("/", admin, async (req, res) => {
 /* ===========================
    DELETE → supprimer un vouch
 =========================== */
-router.delete("/:id", admin, async (req, res) => {
+router.delete("/:id", isAdmin, async (req, res) => {
   try {
     const vouch = await Vouch.findById(req.params.id);
 

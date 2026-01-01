@@ -1,14 +1,14 @@
 const router = require("express").Router();
 const Item = require("../models/Item");
 const Log = require("../models/Log");
-const admin = require("../middlewares/admin");
+const isAdmin = require("../middlewares/isAdmin");
 
 /*
 |--------------------------------------------------------------------------
 | GET — Liste des items
 |--------------------------------------------------------------------------
 */
-router.get("/", admin, async (req, res) => {
+router.get("/", isAdmin, async (req, res) => {
   const items = await Item.find().sort({ createdAt: -1 });
   res.json(items);
 });
@@ -18,7 +18,7 @@ router.get("/", admin, async (req, res) => {
 | POST — Ajouter un item
 |--------------------------------------------------------------------------
 */
-router.post("/", admin, async (req, res) => {
+router.post("/", isAdmin, async (req, res) => {
   const { name } = req.body;
   if (!name) return res.status(400).json({ error: "Nom requis" });
 
@@ -45,7 +45,7 @@ router.post("/", admin, async (req, res) => {
 | PUT — Modifier un item
 |--------------------------------------------------------------------------
 */
-router.put("/:id", admin, async (req, res) => {
+router.put("/:id", isAdmin, async (req, res) => {
   const { name } = req.body;
   if (!name) return res.status(400).json({ error: "Nom requis" });
 
@@ -77,7 +77,7 @@ router.put("/:id", admin, async (req, res) => {
 | DELETE — Supprimer un item
 |--------------------------------------------------------------------------
 */
-router.delete("/:id", admin, async (req, res) => {
+router.delete("/:id", isAdmin, async (req, res) => {
   const item = await Item.findById(req.params.id);
   if (!item) return res.status(404).json({ error: "Item introuvable" });
 

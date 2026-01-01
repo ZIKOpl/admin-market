@@ -2,12 +2,12 @@ const router = require("express").Router();
 const Vendeur = require("../models/Vendeur");
 const Vouch = require("../models/Vouch");
 const Log = require("../models/Log");
-const admin = require("../middlewares/admin");
+const isAdmin = require("../middlewares/isAdmin");
 
 /* ===========================
    GET → tous les vendeurs
 =========================== */
-router.get("/", admin, async (req, res) => {
+router.get("/", isAdmin, async (req, res) => {
   const vendeurs = await Vendeur.find({
     guildId: process.env.GUILD_ID
   }).sort({ name: 1 });
@@ -25,7 +25,7 @@ router.get("/", admin, async (req, res) => {
 /* ===========================
    POST → créer vendeur
 =========================== */
-router.post("/", admin, async (req, res) => {
+router.post("/", isAdmin, async (req, res) => {
   const { name, discordId, force } = req.body;
 
   if (!name || !discordId) {
@@ -70,7 +70,7 @@ router.post("/", admin, async (req, res) => {
 /* ===========================
    PUT → modifier vendeur
 =========================== */
-router.put("/:id", admin, async (req, res) => {
+router.put("/:id", isAdmin, async (req, res) => {
   const { name, discordId } = req.body;
 
   const conflict = await Vendeur.findOne({
@@ -111,7 +111,7 @@ router.put("/:id", admin, async (req, res) => {
    DELETE → supprimer vendeur
    + clear vouches
 =========================== */
-router.delete("/:id", admin, async (req, res) => {
+router.delete("/:id", isAdmin, async (req, res) => {
   const vendeur = await Vendeur.findById(req.params.id);
 
   const deletedVouches = await Vouch.deleteMany({
