@@ -32,17 +32,18 @@ app.use(passport.session());
 passport.serializeUser((user, done) => done(null, user));
 passport.deserializeUser((obj, done) => done(null, obj));
 
-passport.use(new DiscordStrategy({
-  clientID: process.env.DISCORD_CLIENT_ID,
-  clientSecret: process.env.DISCORD_CLIENT_SECRET,
-  callbackURL: process.env.DISCORD_CALLBACK,
-  scope: ["identify", "guilds.members.read"]
-}, (accessToken, refreshToken, profile, done) => {
-
-  profile.accessToken = accessToken; // 👈 CRITIQUE
-
-  return done(null, profile);
-}));
+passport.use(new DiscordStrategy(
+  {
+    clientID: process.env.DISCORD_CLIENT_ID,
+    clientSecret: process.env.DISCORD_CLIENT_SECRET,
+    callbackURL: process.env.DISCORD_CALLBACK,
+    scope: ["identify"]
+  },
+  (accessToken, refreshToken, profile, done) => {
+    profile.accessToken = accessToken; // ⚠️ IMPORTANT
+    return done(null, profile);
+  }
+));
 
 /* Routes */
 app.use("/auth", require("./routes/auth"));
