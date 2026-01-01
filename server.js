@@ -35,9 +35,12 @@ passport.deserializeUser((obj, done) => done(null, obj));
 passport.use(new DiscordStrategy({
   clientID: process.env.DISCORD_CLIENT_ID,
   clientSecret: process.env.DISCORD_CLIENT_SECRET,
-  callbackURL: process.env.DISCORD_CALLBACK_URL,
-  scope: ["identify", "guilds", "guilds.members.read"]
+  callbackURL: process.env.DISCORD_CALLBACK,
+  scope: ["identify", "guilds.members.read"]
 }, (accessToken, refreshToken, profile, done) => {
+
+  profile.accessToken = accessToken; // 👈 CRITIQUE
+
   return done(null, profile);
 }));
 
